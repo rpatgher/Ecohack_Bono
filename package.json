@@ -1,0 +1,16 @@
+{
+  "name": "ecohack_bono",
+  "version": "1.0.0",
+  "description": "API para Bono",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "Remy Patgher & Lisette Melo & Jose Manuel Zumaya & Diego Valencia",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
