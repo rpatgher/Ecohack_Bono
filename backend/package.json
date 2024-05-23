@@ -6,11 +6,12 @@
   "type": "module",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon models/local-file-system/app.js"
   },
   "author": "Remy Patgher & Lisette Melo & Jose Manuel Zumaya & Diego Valencia",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "nodemon": "^3.1.0"
   }
 }

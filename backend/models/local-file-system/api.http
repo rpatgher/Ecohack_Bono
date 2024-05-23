@@ -1,0 +1,46 @@
+### CALCULAR EMISIONES DE N2O DE SUELO
+http://localhost:3000/calculate-n2o-direct-emissions/soils
+Content-Type: application/json
+
+{
+"FS_N_F_ON_CONDITIONS": [
+{
+    "F_SN": 1000,
+    "F_ON": 500,
+    "EF_1i": 0.01
+},
+{
+    "F_SN": 800,
+    "F_ON": 300,
+    "EF_1i": 0.015
+}
+],
+"F_CR": 700,
+"F_SOM": 400,
+"EF_1": 0.02,
+"N2O_N_OS_CONDITIONS": [
+{
+    "F_OS": 200,
+    "EF_2": 0.03,
+    "type": "CG,Temp"
+},
+{
+    "F_OS": 150,
+    "EF_2": 0.025,
+    "type": "F,Trop"
+}
+],
+"N2O_N_PRP_CONDITIONS": [
+{
+    "F_PRP": 100,
+    "EF3_PRP": 0.02,
+    "type": "CPP"
+},
+{
+    "F_PRP": 80,
+    "EF3_PRP": 0.015,
+    "type": "SO"
+}
+]
+}
+
