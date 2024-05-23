@@ -1,5 +1,5 @@
 ### CALCULAR EMISIONES DE N2O DE SUELO
-http://localhost:3000/calculate-n2o-direct-emissions/soils
+GET http://localhost:3000/calculate-n2o-direct-emissions/soils
 Content-Type: application/json
 
 {
@@ -44,3 +44,11 @@ Content-Type: application/json
 ]
 }
 
+###OBTENER DATOS HISTORICOS SEGUN PARAMETROS
+GET http://localhost:3000/data/historical-emissions
+Content-Type: application/json
+
+{
+  "country": "Mexico",
+  "year": "2004"
+}

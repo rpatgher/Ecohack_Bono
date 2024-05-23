@@ -1,0 +1,13 @@
+{
+  "country": "Mexico",
+  "year": "2004"
+}
+
+{
+  "country": "Aruba",
+  "region_ar6_6": "Latin America and Caribbean",
+  "year": "1980",
+  "sector_title": "Industry",
+  "subsector_title": "Other (industry)",
+  "gas": "CH4"
+}

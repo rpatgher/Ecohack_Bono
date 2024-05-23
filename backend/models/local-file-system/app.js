@@ -1,7 +1,19 @@
-import express from "express";
+import mysql from 'mysql2/promise';
+import express from 'express';
+ /* import fs from 'fs'; */
 const app = express();
 app.use(express.json());
 app.use(express.static('public'));
+
+async function connectToDB() {
+  return await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      port: 3306,
+      password: 'r922006',
+      database: 'BonoDB'
+  });
+}
 
 
 app.get('/factors/emison', (req, res) => {
@@ -35,10 +47,61 @@ app.get('/calculate-n2o-direct-emissions/soils', (req, res) => {
 
 });
 
-app.get('data/historic/', (req, res) => {
-  res.send('data historic');
+app.get('/data/historical-emissions', async (req, res) => {
+  let connection = null;
+  
+  const { country, region_ar6_6, year, sector_title, subsector_title, gas, value } = req.body;
+
+  try {
+    connection = await connectToDB();
+
+    let query = 'SELECT * FROM Emissions WHERE 1=1';
+
+    const params = [];
+    if (country) {
+      query += ' AND country = ?';
+      params.push(country);
+    }
+    if (region_ar6_6) {
+      query += ' AND region_ar6_6 = ?';
+      params.push(region_ar6_6);
+    }
+    if (year) {
+      query += ' AND year = ?';
+      params.push(year);
+    }
+    if (sector_title) {
+      query += ' AND sector_title = ?';
+      params.push(sector_title);
+    }
+    if (subsector_title) {
+      query += ' AND subsector_title = ?';
+      params.push(subsector_title);
+    }
+    if (gas) {
+      query += ' AND gas = ?';
+      params.push(gas);
+    }
+    if (value) {
+      query += ' AND value = ?';
+      params.push(value);
+    }
+    console.log(query);
+    const [rows] = await connection.query(query, params);
+    res.status(200).json(rows);
+
+  } catch (error) {
+
+    console.log(error.message);
+    res.status(500).json({"message" : "Failed to query in data base"});
+
+  } finally {
+    if (connection !== null) {
+      connection.end();
+      console.log('Conexión cerrada exitosamente');
+  }
+  }
 });
  
-// Listen
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
