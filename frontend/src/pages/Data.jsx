@@ -1,5 +1,6 @@
 import Chart from 'chart.js/auto';
 import { useState } from 'react';
+import axios from 'axios';
 
 // ***************** Styles *****************
 import styles from '../styles/Data.module.css';
@@ -23,30 +24,8 @@ const Data = () => {
 
   useEffect(() => {
     const setChart = () => {
-      const ctx = document.getElementById('chart-1');
       const ctx2 = document.getElementById('chart-2');
       const ctx3 = document.getElementById('chart-3');
-
-      if(ctx){
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-              label: '# of Votes',
-              data: [12, 19, 3, 5, 2, 3],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      }
 
       if(ctx2){
         new Chart(ctx2, {
@@ -103,6 +82,36 @@ const Data = () => {
     return () => setChart();
   }, []);
 
+  const [request1, setRequest1] = useState({
+    country: '',
+    year: ''
+  });
+
+  const [request2, setRequest2] = useState({
+    country: '',
+  });
+
+
+  const handleRequest2 = async (e) => {
+    setRequest2({
+      ...request2,
+      [e.target.name]: e.target.value
+    });
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+    try {
+        const response = await axios.get(`http://localhost:3000/data/historical-emissions/${request2.country}`, config);
+        
+        console.log(response);
+    } catch (error) {
+        console.error(error);
+    }
+
+  }
+
 
 
 
@@ -120,60 +129,12 @@ const Data = () => {
                 <select 
                   name="country" 
                   id="country"
-                  value={''}
+                  value={request2.country || ''}
+                  onChange={handleRequest2}
                 >
                   <option value="" disabled>-- Selecciona País --</option>
+                  <option value="Mexico">México</option>
                 </select>
-              </div>
-            </div>
-            <canvas 
-              id="chart-1"
-            ></canvas>
-          </div>
-          <div className={styles.chart}>
-            <h3>Hola</h3>
-            <div className={styles.filters}>
-              <div className={styles.filter}>
-                <label htmlFor="country">País</label>
-                <select 
-                  name="country" 
-                  id="country"
-                  value={''}
-                >
-                  <option value="" disabled>-- Selecciona País --</option>
-                </select>
-              </div>
-              <div className={styles.filter}>
-                <label htmlFor="year">Año</label>
-                <input 
-                  type="number"
-                  placeholder='Ej. 2021'
-                />
-              </div>
-            </div>
-            <canvas 
-              id="chart-2"
-            ></canvas>
-          </div>
-          <div className={styles.chart}>
-            <h3>Hola</h3>
-            <div className={styles.filters}>
-              <div className={styles.filter}>
-                <label htmlFor="country">País</label>
-                <select 
-                  name="country" 
-                  id="country"
-                  value={''}
-                >
-                  <option value="" disabled>-- Selecciona País --</option>
-                </select>
-              </div>
-              <div className={styles.filter}>
-                <label htmlFor="year">Año</label>
-                <input 
-                  type="number"
-                  placeholder='Ej. 2021'
-                />
               </div>
             </div>
             <canvas 
