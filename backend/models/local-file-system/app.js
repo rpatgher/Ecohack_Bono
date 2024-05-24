@@ -1,7 +1,22 @@
 import mysql from 'mysql2/promise';
 import express from 'express';
- /* import fs from 'fs'; */
+import cors from 'cors';
+
 const app = express();
+
+const whitelist = ['http://localhost:5173'];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.includes(origin)){
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+// app.use(cors(corsOptions));
+
+ /* import fs from 'fs'; */
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -20,9 +35,9 @@ app.get('/factors/emison', (req, res) => {
   res.send('Hello World');
 });
 
-app.get('/calculate-n2o-direct-emissions/soils', (req, res) => {
-  const { FS_N_F_ON_CONDITIONS, F_CR, F_SOM, EF_1, N2O_N_OS_CONDITIONS, N2O_N_PRP_CONDITIONS} = req.body;
-
+app.get('/calculate-n2o-direct-emissions/soils/:info', (req, res) => {
+  const { FS_N_F_ON_CONDITIONS, F_CR, F_SOM, EF_1, N2O_N_OS_CONDITIONS, N2O_N_PRP_CONDITIONS} = JSON.parse(req.params.info);
+  console.log(JSON.parse(req.params.info));
   let FS_N_F_ON_EF1i_SUM = 0;
   FS_N_F_ON_CONDITIONS.forEach(condition => {
     const { F_SN, F_ON, EF_1i} = condition;

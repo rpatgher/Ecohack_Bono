@@ -1,4 +1,5 @@
-import { useState, Fragment } from 'react';
+import { useState } from 'react';
+import axios from 'axios';
 
 // ***************** Styles *****************
 import styles from '../styles/FormSuelo.module.css';
@@ -9,14 +10,10 @@ const FormSuelo = () => {
         FS_N_F_ON_CONDITIONS: [],
         F_CR: "",
         F_SOM: "",
-        EF_1: "",
+        EF_1: 0.01,
         N2O_N_OS_CONDITIONS: [],
         N2O_N_PRP_CONDITIONS: [],
     });
-
-    const [fs_n_f_on_conditions, setFsNFOnConditions] = useState([]);
-    const [n2o_n_os_conditions, setN2oNOsConditions] = useState([]);
-    const [n2o_n_prp_conditions, setN2oNPrpConditions] = useState([]);
 
     const [conditions, setConditions] = useState([
         { title: 'Tierra forestal, drenada (Nutrientes pobres); Clima Boreal', factor: 0.22, key: 'trop' },
@@ -35,6 +32,12 @@ const FormSuelo = () => {
         { title: 'Pastizales; Clima Tropical / Subtropical', factor: 5, key: 'grassland' },
         { title: 'Áreas para extracción de turba; Clima Boreal y Templado', factor: 0.3, key: 'peatland' },
         { title: 'Áreas para extracción de turba; Clima Tropical / Subtropical', factor: 3.6, key: 'peatland-tropical' },
+    ]);
+
+    const [conditions2, setConditions2] = useState([
+        { title: 'EF3PRP, CPP para ganado (lácteo, no lácteo y búfalo), aves de corral y cerdos', factor: 0.004, key: 'cattle' },
+        { title: 'EF3PRP, para ovejas y otros animales', factor: 0.003, key: 'ship' }
+
     ]);
 
     const [amount, setAmount] = useState(1);
@@ -62,6 +65,21 @@ const FormSuelo = () => {
         }));  
     };
 
+    const handleSelectChange = (e, i) => {
+        const { value } = e.target;
+        setRequest((prev) => ({
+            ...prev,
+            FS_N_F_ON_CONDITIONS: [
+                ...prev.FS_N_F_ON_CONDITIONS.slice(0, i),
+                {
+                    ...prev.FS_N_F_ON_CONDITIONS[i],
+                    EF_1i: value,
+                },
+                ...prev.FS_N_F_ON_CONDITIONS.slice(i + 1),
+            ],
+        }));
+    }
+
     const handleCheckboxChange = (e, condition) => {
         const { checked } = e.target;
         setConditions((prev) => {
@@ -87,6 +105,32 @@ const FormSuelo = () => {
         }));
     };
 
+    const handleCheckboxChange2 = (e, condition) => {
+        const { checked } = e.target;
+        setConditions2((prev) => {
+            const index = prev.findIndex((c) => c.key === condition.key);
+            return [
+                ...prev.slice(0, index),
+                {
+                    ...prev[index],
+                    checked,
+                },
+                ...prev.slice(index + 1),
+            ];
+        });
+        setRequest((prev) => ({
+            ...prev,
+            N2O_N_PRP_CONDITIONS: [
+                ...prev.N2O_N_PRP_CONDITIONS,
+                {
+                    EF_2: e.target.dataset.factor,
+                    type: condition.key
+                },
+            ],
+        }));
+    };
+
+
     const handleTextCheckboxChange = (e, i) => {
         const { value, dataset } = e.target;
         const currentCondition = request.N2O_N_OS_CONDITIONS.find((condition) => condition.type === dataset.type);
@@ -103,22 +147,45 @@ const FormSuelo = () => {
         }));
     }
 
-    const handleCheckboxChange2 = (e) => {
-        const { value, name } = e.target;
+    const handleTextCheckboxChange2 = (e, i) => {
+        const { value, dataset } = e.target;
+        const currentCondition = request.N2O_N_PRP_CONDITIONS.find((condition) => condition.type === dataset.type);
         setRequest((prev) => ({
             ...prev,
             N2O_N_PRP_CONDITIONS: [
-                ...prev.N2O_N_PRP_CONDITIONS,
+                ...prev.N2O_N_PRP_CONDITIONS.slice(0, i),
                 {
-                    EF_2: value,
-                    type: name
+                    ...currentCondition,
+                    F_PRP: value,
                 },
+                ...prev.N2O_N_PRP_CONDITIONS.slice(i + 1),
             ],
         }));
     }
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+
+        try {
+            const response = await axios.get(`http://localhost:3000/calculate-n2o-direct-emissions/soils/${JSON.stringify(request)}`, config);
+            
+            console.log(response);
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+
     return (
-        <form className={styles.form}>
+        <form 
+            className={styles.form}
+            onSubmit={handleSubmit}
+        >
             <div className={styles["multi-input"]}>
                 <div className={styles.more}>
                     <button 
@@ -163,12 +230,30 @@ const FormSuelo = () => {
                                 <p>Cantidad anual de estiércol animal, composta, lodos de aguas residuales y otras adiciones orgánicas aplicadas a los suelos</p>
                             </div>
                             <div className={styles.field}>
-                                <label htmlFor="EF_1i">Cantidad Anual Orgánico:</label>
-                                <input
+                                <label htmlFor="EF_1i">Condición de factor de Emisión:</label>
+                                <select 
+                                    name="EF_1i" 
                                     id="EF_1i"
-                                    name="EF_1i"
-                                    type="text"
-                                />
+                                    value={request.FS_N_F_ON_CONDITIONS[i]?.EF_1i || ''}
+                                    onChange={(e) => handleSelectChange(e, i)}
+                                >
+                                    <option 
+                                        value=""
+                                        disabled
+                                    >-- Seleccione Opción --</option>
+                                    <option 
+                                        value={0.01}
+                                        data-value={0.01}
+                                    >
+                                        EF1 para adiciones de nitrógeno de fertilizantes sintéticos enmiendas orgánicas y residuos de cultivos
+                                    </option>
+                                    <option 
+                                        value={0.004}
+                                        data-value={0.004}
+                                    >
+                                        EF1FR para campos de arroz inundados
+                                    </option>
+                                </select>
                                 <p>Cantidad anual de fertilizante sintético aplicado a suelos</p>
                             </div>
                         </div>
@@ -202,7 +287,7 @@ const FormSuelo = () => {
             <div className={styles.field}>
                 <label htmlFor="EF_1">Factor de emisión:</label>
                 <div className={styles["disabled-field"]}>
-                    0.02
+                    {request.EF_1}
                 </div>
                 <p>Factor de emisión de las emisiones de N2O de los insumos</p>
             </div>
@@ -239,21 +324,40 @@ const FormSuelo = () => {
             <div className={styles.field}>
                 <label htmlFor="F_SOM">Emisiones anuales directas de N<sub>2</sub>O-N de la orina y los insumos de estiércol a los suelos de pastoreo</label>
                 <div className={styles.checkboxes}>
-                    <div className={styles.checkbox}>
-                        <input 
-                            type="checkbox"
-                            id="trop"
-                            name="trop"
-                        />
-                        <label htmlFor="trop">Trop</label>
-                        <input 
-                            type="text"
-                            className={styles["input-text-checkbox"]}
-                            placeholder='Ej. 700'
-                        />
-                    </div>
+                    {conditions2.map((condition, i) => (
+                        <div 
+                            className={styles.checkbox}
+                            key={i}
+                        >
+                            <input 
+                                type="checkbox"
+                                id={condition.key}
+                                name={condition.key}
+                                data-factor={condition.factor}
+                                onChange={(e) => handleCheckboxChange2(e, condition)}
+                            />
+                            <label 
+                                htmlFor={condition.key}
+                            >{condition.title}</label>
+                            {condition?.checked && (
+                                <input 
+                                    type="text"
+                                    className={styles["input-text-checkbox"]}
+                                    placeholder='Ej. 700'
+                                    data-factor={condition.factor}
+                                    data-type={condition.key}
+                                    onChange={(e) => handleTextCheckboxChange2(e, i)}
+                                />    
+                            )}
+                        </div>    
+                    ))}
                 </div>
             </div>
+
+            <button
+                type="submit"
+                className={styles.calculate}
+            >Calcular</button>
         </form>
     )
 }

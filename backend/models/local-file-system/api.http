@@ -52,3 +52,59 @@ Content-Type: application/json
   "country": "Mexico",
   "year": "2004"
 }
+
+
+
+###FUNCION
+GET http://localhost:3000/calculate-n2o-direct-emissions/soils
+Content-Type: application/json
+
+{
+  "FS_N_F_ON_CONDITIONS": [
+    {
+      "F_SN": "100",
+      "F_ON": "500",
+      "EF_1i": "0.004"
+    }
+  ],
+  "F_CR": "22",
+  "F_SOM": "112222",
+  "EF_1": 0.01,
+  "N2O_N_OS_CONDITIONS": [
+    {
+      "EF_2": "0.22",
+      "type": "trop",
+      "F_OS": "121"
+    },
+    {
+      "EF_2": "3.6",
+      "type": "peatland-tropical"
+    },
+    {
+      "EF_2": "3.6",
+      "type": "peatland-tropical",
+      "F_OS": "1"
+    },
+    {
+      "EF_2": "3.6",
+      "type": "peatland-tropical",
+      "F_OS": "12"
+    },
+    {
+      "EF_2": "3.6",
+      "type": "peatland-tropical",
+      "F_OS": "121"
+    }
+  ],
+  "N2O_N_PRP_CONDITIONS": [
+    {
+      "EF_2": "0.003",
+      "type": "ship"
+    },
+    {
+      "EF_2": "0.003",
+      "type": "ship",
+      "F_PRP": "77"
+    }
+  ]
+}

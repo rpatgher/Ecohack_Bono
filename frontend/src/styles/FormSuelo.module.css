@@ -65,7 +65,13 @@ input::placeholder{
     font-size: 1.8rem;
     font-weight: bold;
 }
-.input-text-checkbox, .disabled-field, .field input{
+.field select{
+    all: unset;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.input-text-checkbox, .disabled-field, .field input, .field select{
     padding: .5rem 1rem;
     font-size: 1.6rem;
     border: 1px solid var(--dark_green);
@@ -97,4 +103,21 @@ input::placeholder{
 input.input-text-checkbox{
     margin-left: 2rem;
     font-size: 1rem;
+}
+.calculate{
+    all: unset;
+    cursor: pointer;
+    background-color: var(--dark_green);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 1rem;
+    text-align: center;
+    font-size: 1.8rem;
+    margin-top: 4rem;
+    align-self: center;
+    width: 30rem;
+}
+.calculate:hover{
+    background-color: var(--light_green);
+
 }
