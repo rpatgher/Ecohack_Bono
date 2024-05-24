@@ -4,8 +4,12 @@ import axios from 'axios';
 // ***************** Styles *****************
 import styles from '../styles/FormSuelo.module.css';
 
+import Modal from './Modal';
+
 
 const FormSuelo = () => {
+    const [open, setOpen] = useState(true);
+    const [modalText, setModalText] = useState('Some text in the Modal..');
     const [request, setRequest] = useState({
         FS_N_F_ON_CONDITIONS: [],
         F_CR: "",
@@ -131,9 +135,10 @@ const FormSuelo = () => {
     };
 
 
-    const handleTextCheckboxChange = (e, i) => {
+    const handleTextCheckboxChange = (e) => {
         const { value, dataset } = e.target;
         const currentCondition = request.N2O_N_OS_CONDITIONS.find((condition) => condition.type === dataset.type);
+        const i = request.N2O_N_OS_CONDITIONS.findIndex((condition) => condition.type === dataset.type);
         setRequest((prev) => ({
             ...prev,
             N2O_N_OS_CONDITIONS: [
@@ -147,9 +152,10 @@ const FormSuelo = () => {
         }));
     }
 
-    const handleTextCheckboxChange2 = (e, i) => {
+    const handleTextCheckboxChange2 = (e) => {
         const { value, dataset } = e.target;
         const currentCondition = request.N2O_N_PRP_CONDITIONS.find((condition) => condition.type === dataset.type);
+        const i = request.N2O_N_PRP_CONDITIONS.findIndex((condition) => condition.type === dataset.type);
         setRequest((prev) => ({
             ...prev,
             N2O_N_PRP_CONDITIONS: [
@@ -170,7 +176,6 @@ const FormSuelo = () => {
                 'Content-Type': 'application/json',
             },
         };
-
         try {
             const response = await axios.get(`http://localhost:3000/calculate-n2o-direct-emissions/soils/${JSON.stringify(request)}`, config);
             
@@ -186,6 +191,12 @@ const FormSuelo = () => {
             className={styles.form}
             onSubmit={handleSubmit}
         >
+            {open && 
+                <Modal 
+                    setOpen={setOpen} 
+                    text={modalText}
+                />
+            }
             <div className={styles["multi-input"]}>
                 <div className={styles.more}>
                     <button 
@@ -314,7 +325,7 @@ const FormSuelo = () => {
                                     data-factor={condition.factor}
                                     data-type={condition.key}
                                     placeholder='Ej. 700'
-                                    onChange={(e) => handleTextCheckboxChange(e, i)}
+                                    onChange={(e) => handleTextCheckboxChange(e)}
                                 />
                             )}
                         </div>
@@ -346,7 +357,7 @@ const FormSuelo = () => {
                                     placeholder='Ej. 700'
                                     data-factor={condition.factor}
                                     data-type={condition.key}
-                                    onChange={(e) => handleTextCheckboxChange2(e, i)}
+                                    onChange={(e) => handleTextCheckboxChange2(e)}
                                 />    
                             )}
                         </div>    
