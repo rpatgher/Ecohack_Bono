@@ -1,0 +1,53 @@
+.header{
+    background-image: url(/img/bg.webp);
+    background-size: cover;
+    background-position: center center;
+
+    color: var(--white);
+}
+.overlay{
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    min-height: 40vh;
+}
+.nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3rem;
+}
+.nav h2{
+    margin: 0;
+    color: var(--light_green);
+}
+.nav h2 span{
+    color: var(--beige);
+}
+.nav ul{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+}
+.content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.content h1{
+    font-size: 7rem;
+    margin-top: 7rem;
+ }
+.nav a{
+    color: var(--white);
+    font-weight: bold;
+}
+.nav a:hover{
+    color: var(--light_green);
+}
+a.active{
+    color: var(--light_green);
+}

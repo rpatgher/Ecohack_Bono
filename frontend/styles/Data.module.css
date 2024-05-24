@@ -1,0 +1,51 @@
+.charts{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5rem;
+    align-items: center;
+    align-items: center;
+    max-width: 120rem;
+    margin: 0 auto;
+    padding: 5rem 0;
+}
+
+.chart{
+    width: 50%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.chart h3{
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--dark_green);
+    margin: 0;
+    text-align: center;
+}
+.filters{
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+.filter{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: flex-start;
+    color: var(--dark_green);
+    margin: 2rem 0;
+}
+.filter label{
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+.filter input, .filter select{
+    width: 20rem;
+    height: 3rem;
+    padding: 0 1rem;
+    font-size: 1.6rem;
+    border: 1px solid var(--dark_green);
+    border-radius: 5px;
+}

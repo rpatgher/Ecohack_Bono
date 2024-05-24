@@ -1,3 +1,15 @@
+:root{
+    --dark_green: #276749; 
+    --light_green: #81C784;
+    --beige: #F9EBC8;
+    --marroon: #6B4E31;
+    --blue_sky: #87CEEB;
+
+    --black: #000;
+    --white: #fff;
+
+    color: var(--black);
+}
 html {
     font-size: 62.5%;
     box-sizing: border-box;
@@ -9,6 +21,7 @@ html {
 body {
     font-size: 1.8rem;
     height: 100vh;
+    margin: 0;
 }
 a {
     text-decoration: none;
