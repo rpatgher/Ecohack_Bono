@@ -108,3 +108,13 @@ Content-Type: application/json
     }
   ]
 }
+
+
+###OBTENER DATOS HISTORICOS SEGUN PARAMETROS
+GET http://localhost:3000/data/historical-emissions/gas
+Content-Type: application/json
+
+{
+  "country": "Mexico",
+  "year": "2004"
+}

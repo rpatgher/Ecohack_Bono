@@ -62,48 +62,61 @@ app.get('/calculate-n2o-direct-emissions/soils/:info', (req, res) => {
 
 });
 
-app.get('/data/historical-emissions', async (req, res) => {
+app.get('/data/historical-emissions/:info', async (req, res) => {
   let connection = null;
   
-  const { country, region_ar6_6, year, sector_title, subsector_title, gas, value } = req.body;
+  const { country } = JSON.parse(req.params.info);
 
   try {
     connection = await connectToDB();
 
-    let query = 'SELECT * FROM Emissions WHERE 1=1';
+   const query = `
+      SELECT year, value
+      FROM emissions
+      WHERE country = ? AND sector_title = 'AFOLU'
+    `;
 
-    const params = [];
-    if (country) {
-      query += ' AND country = ?';
-      params.push(country);
-    }
-    if (region_ar6_6) {
-      query += ' AND region_ar6_6 = ?';
-      params.push(region_ar6_6);
-    }
-    if (year) {
-      query += ' AND year = ?';
-      params.push(year);
-    }
-    if (sector_title) {
-      query += ' AND sector_title = ?';
-      params.push(sector_title);
-    }
-    if (subsector_title) {
-      query += ' AND subsector_title = ?';
-      params.push(subsector_title);
-    }
-    if (gas) {
-      query += ' AND gas = ?';
-      params.push(gas);
-    }
-    if (value) {
-      query += ' AND value = ?';
-      params.push(value);
-    }
-    console.log(query);
-    const [rows] = await connection.query(query, params);
-    res.status(200).json(rows);
+    const [results] = await connection.execute(query, [country]);
+
+    const formattedResults = results.map(row => ({
+      year: row.year,
+      value: row.value
+    }));
+
+    res.json(formattedResults);
+
+    // const params = [];
+    // if (country) {
+    //   query += ' AND country = ?';
+    //   params.push(country);
+    // }
+    // if (region_ar6_6) {
+    //   query += ' AND region_ar6_6 = ?';
+    //   params.push(region_ar6_6);
+    // }
+    // if (year) {
+    //   query += ' AND year = ?';
+    //   params.push(year);
+    // }
+    // if (sector_title) {
+    //   query += ' AND sector_title = ?';
+    //   params.push(sector_title);
+    // }
+    // if (subsector_title) {
+    //   query += ' AND subsector_title = ?';
+    //   params.push(subsector_title);
+    // }
+    // if (gas) {
+    //   query += ' AND gas = ?';
+    //   params.push(gas);
+    // }
+    // if (value) {
+    //   query += ' AND value = ?';
+    //   params.push(value);
+    // }
+    // console.log(query);
+    // const [rows] = await connection.query(query, params);
+    // res.status(200).json(rows);
 
   } catch (error) {
 
@@ -115,6 +128,44 @@ app.get('/data/historical-emissions', async (req, res) => {
       connection.end();
       console.log('Conexión cerrada exitosamente');
   }
+  }
+});
+
+
+app.get('/data/historical-emissions/gas', async (req, res) => {
+  const {country, year} = req.body;
+  console.log(req.body);
+  //JSON.parse(req.params.info);
+  let connection = null;
+
+  try {
+
+    connection = await connectToDB();
+
+    const query = `
+    SELECT gas, SUM(value) as total_value
+    FROM emissions
+    WHERE country = ? AND year = ? AND sector_title = 'AFOLU'
+    GROUP BY gas
+  `;
+
+  const [results] = await connection.execute(query, [country, year]);
+
+  const formattedResults = results.reduce((acc, row) => {
+    acc[row.gas] = row.total_value;
+    return acc;
+  }, {});
+
+  res.json(formattedResults);
+
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({"message" : "Failed to query in data base"});
+  } finally {
+    if (connection !== null) {
+      connection.end();
+      console.log('Conexión cerrada exitosamente');
+    }
   }
 });
  
