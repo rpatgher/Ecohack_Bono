@@ -7,7 +7,7 @@ Content-Type: application/json
 {
     "F_SN": 1000,
     "F_ON": 500,
-    "EF_1i": 0.01
+    "EF_1i": 0.1
 },
 {
     "F_SN": 800,
