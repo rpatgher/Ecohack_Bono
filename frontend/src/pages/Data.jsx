@@ -15,8 +15,7 @@ const Data = () => {
       label: '# of Votes',
       data: [12, 19, 3, 5, 2, 3],
       borderWidth: 1
-    }
-  ]
+    }]
   });
   useEffect(() => {
 
@@ -24,57 +23,83 @@ const Data = () => {
 
   useEffect(() => {
     const setChart = () => {
-      const ctx = document.querySelector('.chart-1');
-      const ctx2 = document.querySelector('.chart-2');
-      const ctx3 = document.querySelector('.chart-3');
+      const ctx = document.getElementById('chart-1');
+      const ctx2 = document.getElementById('chart-2');
+      const ctx3 = document.getElementById('chart-3');
 
-      new Chart(ctx, {
-        type: 'bar',
-        data: data,
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
+      if(ctx){
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+              label: '# of Votes',
+              data: [12, 19, 3, 5, 2, 3],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
             }
           }
-        }
-      });
+        });
+      }
 
-      new Chart(ctx2, {
-        type: 'pie',
-        data: data,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-            title: {
-              display: true,
-              text: 'Chart.js Pie Chart'
+      if(ctx2){
+        new Chart(ctx2, {
+          type: 'pie',
+          data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+              label: '# of Votes',
+              data: [12, 19, 3, 5, 2, 3],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Chart.js Pie Chart'
+              }
             }
-          }
-        },
-      })
+          },
+        })
+      }
 
-      new Chart(ctx3, {
-        type: 'line',
-        data: data,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: 'top',
-            },
-            title: {
-              display: true,
-              text: 'Chart.js Line Chart'
+      if(ctx3){
+        new Chart(ctx3, {
+          type: 'line',
+          data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+              label: '# of Votes',
+              data: [12, 19, 3, 5, 2, 3],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Chart.js Line Chart'
+              }
             }
-          }
-        },
-      })
+          },
+        })
+      }
     }
-
     return () => setChart();
   }, []);
 
@@ -102,7 +127,7 @@ const Data = () => {
               </div>
             </div>
             <canvas 
-              className="chart-1"
+              id="chart-1"
             ></canvas>
           </div>
           <div className={styles.chart}>
@@ -127,7 +152,7 @@ const Data = () => {
               </div>
             </div>
             <canvas 
-              className="chart-2"
+              id="chart-2"
             ></canvas>
           </div>
           <div className={styles.chart}>
@@ -152,7 +177,7 @@ const Data = () => {
               </div>
             </div>
             <canvas 
-              className="chart-3"
+              id="chart-3"
             ></canvas>
           </div>
         </div>

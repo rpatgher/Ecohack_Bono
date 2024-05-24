@@ -18,6 +18,25 @@ const FormSuelo = () => {
     const [n2o_n_os_conditions, setN2oNOsConditions] = useState([]);
     const [n2o_n_prp_conditions, setN2oNPrpConditions] = useState([]);
 
+    const [conditions, setConditions] = useState([
+        { title: 'Tierra forestal, drenada (Nutrientes pobres); Clima Boreal', factor: 0.22, key: 'trop' },
+        { title: 'Tierra forestal, drenada (Nutrientes ricos); Clima Boreal', factor: 3.2, key: 'trop-rich' },
+        { title: 'Tierra forestal, drenada; Clima Templado', factor: 2.8, key: 'trop' },
+        { title: 'Tierra forestales y tierras forestales despejadas, drenadas; Clima Tropical / Subtropical', factor: 2.4, key: 'f-land-clear' },
+        { title: 'Plantación: palma aceitera; Clima Tropical / Subtropical', factor: 1.2, key: 'oil-palm' },
+        { title: 'Platanción: palma de sagú; Clima Tropical / Subtropical', factor: 3.3, key: 'sago-palm' },
+        { title: 'Tierra de cultivo, drenada; Clima Boreal y templado', factor: 13, key: 'cropland' },
+        { title: 'Tierra de cultivo excepto arroz; Clima Tropical / Subtropical', factor: 5, key: 'without-rice' },
+        { title: 'Arroz; Clima Tropical / Subtropical', factor: 0.4, key: 'rice' },
+        { title: 'Pastizales drenados; Clima Boreal', factor: 9.5, key: 'drained-grassland' },
+        { title: 'Pastizales drenados (Nutrientes pobres); Clima Templado', factor: 4.3, key: 'drained-grassland' },
+        { title: 'Pastizales profundamente drenados (Nutrientes ricos); Clima Templado', factor: 8.2, key: 'deep-drained-grassland' },
+        { title: 'Pastizales superficial drenados (Nutrientes ricos); Clima Templado', factor: 1.6, key: 'shallow-drained-grassland' },
+        { title: 'Pastizales; Clima Tropical / Subtropical', factor: 5, key: 'grassland' },
+        { title: 'Áreas para extracción de turba; Clima Boreal y Templado', factor: 0.3, key: 'peatland' },
+        { title: 'Áreas para extracción de turba; Clima Tropical / Subtropical', factor: 3.6, key: 'peatland-tropical' },
+    ]);
+
     const [amount, setAmount] = useState(1);
 
     const handleChange = (e) => {
@@ -42,6 +61,61 @@ const FormSuelo = () => {
             ],
         }));  
     };
+
+    const handleCheckboxChange = (e, condition) => {
+        const { checked } = e.target;
+        setConditions((prev) => {
+            const index = prev.findIndex((c) => c.key === condition.key);
+            return [
+                ...prev.slice(0, index),
+                {
+                    ...prev[index],
+                    checked,
+                },
+                ...prev.slice(index + 1),
+            ];
+        });
+        setRequest((prev) => ({
+            ...prev,
+            N2O_N_OS_CONDITIONS: [
+                ...prev.N2O_N_OS_CONDITIONS,
+                {
+                    EF_2: e.target.dataset.factor,
+                    type: condition.key
+                },
+            ],
+        }));
+    };
+
+    const handleTextCheckboxChange = (e, i) => {
+        const { value, dataset } = e.target;
+        const currentCondition = request.N2O_N_OS_CONDITIONS.find((condition) => condition.type === dataset.type);
+        setRequest((prev) => ({
+            ...prev,
+            N2O_N_OS_CONDITIONS: [
+                ...prev.N2O_N_OS_CONDITIONS.slice(0, i),
+                {
+                    ...currentCondition,
+                    F_OS: value,
+                },
+                ...prev.N2O_N_OS_CONDITIONS.slice(i + 1),
+            ],
+        }));
+    }
+
+    const handleCheckboxChange2 = (e) => {
+        const { value, name } = e.target;
+        setRequest((prev) => ({
+            ...prev,
+            N2O_N_PRP_CONDITIONS: [
+                ...prev.N2O_N_PRP_CONDITIONS,
+                {
+                    EF_2: value,
+                    type: name
+                },
+            ],
+        }));
+    }
 
     return (
         <form className={styles.form}>
@@ -135,19 +209,31 @@ const FormSuelo = () => {
             <div className={styles.field}>
                 <label htmlFor="F_SOM">Emisiones directas anuales de N<sub>2</sub>O-N de suelos orgánicos gestionados:</label>
                 <div className={styles.checkboxes}>
-                    <div className={styles.checkbox}>
-                        <input 
-                            type="checkbox"
-                            id="trop"
-                            name="trop"
-                        />
-                        <label htmlFor="trop">Trop</label>
-                        <input 
-                            type="text"
-                            className={styles["input-text-checkbox"]}
-                            placeholder='Ej. 700'
-                        />
-                    </div>
+                    {conditions.map((condition, i) => (
+                        <div 
+                            className={styles.checkbox}
+                            key={i}
+                        >
+                            <input 
+                                type="checkbox"
+                                id={condition.key}
+                                name={condition.key}
+                                data-factor={condition.factor}
+                                onChange={(e) => handleCheckboxChange(e, condition)}
+                            />
+                            <label htmlFor={condition.key}>{condition.title}</label>
+                            {condition?.checked && (
+                                <input 
+                                    type="text"
+                                    className={styles["input-text-checkbox"]}
+                                    data-factor={condition.factor}
+                                    data-type={condition.key}
+                                    placeholder='Ej. 700'
+                                    onChange={(e) => handleTextCheckboxChange(e, i)}
+                                />
+                            )}
+                        </div>
+                    ))}
                 </div>
             </div>
             <div className={styles.field}>

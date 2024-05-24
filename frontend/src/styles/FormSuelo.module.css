@@ -7,6 +7,12 @@
     padding: 7rem 0;
     color: var(--dark_green);
 }
+input{
+    color: var(--dark_green);
+}
+input::placeholder{
+    color: color-mix(in srgb, var(--dark_green) 50%, #fff);
+}
 .multi-input-fields{
     display: flex;
     gap: 2rem;
